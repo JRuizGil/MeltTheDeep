@@ -40,3 +40,7 @@ crashlytics-build.properties
 # SO
 .DS_Store
 Thumbs.db
+
+# Escenas recuperadas por Unity tras un cierre inesperado
+/[Aa]ssets/_Recovery/
+/[Aa]ssets/_Recovery.meta
