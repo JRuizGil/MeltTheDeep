@@ -1,0 +1,33 @@
+{
+    "version": 1,
+    "name": "MeltControls",
+    "maps": [
+        {
+            "name": "Player",
+            "id": "ce9124f3-0646-4286-9289-6a17f62ec385",
+            "actions": [
+                { "name": "Move", "type": "Value", "id": "ace7e36a-c668-41d8-be05-61c26324c36d", "expectedControlType": "Vector2", "processors": "", "interactions": "", "initialStateCheck": true },
+                { "name": "Look", "type": "Value", "id": "4a26cf01-e7a0-438e-a1e0-1d665b17e57e", "expectedControlType": "Vector2", "processors": "", "interactions": "", "initialStateCheck": true },
+                { "name": "Jump", "type": "Button", "id": "34640050-24bc-44f4-8d67-9ee0d879a28a", "expectedControlType": "Button", "processors": "", "interactions": "", "initialStateCheck": false },
+                { "name": "Jet", "type": "Button", "id": "9b82569c-fba0-4831-b6b8-d97100fd94c0", "expectedControlType": "Button", "processors": "", "interactions": "", "initialStateCheck": false },
+                { "name": "Vacuum", "type": "Button", "id": "6691ce6d-664d-4c0f-9ad8-f03390a5caae", "expectedControlType": "Button", "processors": "", "interactions": "", "initialStateCheck": false },
+                { "name": "EmptyTank", "type": "Button", "id": "bd4d55e5-309e-46dd-a932-cee04ba8e11c", "expectedControlType": "Button", "processors": "", "interactions": "", "initialStateCheck": false },
+                { "name": "ReleaseCursor", "type": "Button", "id": "52230bb4-be04-4aaa-ac6f-f6418f2dd571", "expectedControlType": "Button", "processors": "", "interactions": "", "initialStateCheck": false }
+            ],
+            "bindings": [
+                { "name": "WASD", "id": "789932ae-ef30-4654-8d60-9cf54a9da23a", "path": "2DVector", "interactions": "", "processors": "", "groups": "", "action": "Move", "isComposite": true, "isPartOfComposite": false },
+                { "name": "up", "id": "a3239af1-8b39-435f-a1d4-f7ab4dffa421", "path": "<Keyboard>/w", "interactions": "", "processors": "", "groups": "", "action": "Move", "isComposite": false, "isPartOfComposite": true },
+                { "name": "down", "id": "b20eee23-73b1-4ba3-9f82-c736b1cfd68b", "path": "<Keyboard>/s", "interactions": "", "processors": "", "groups": "", "action": "Move", "isComposite": false, "isPartOfComposite": true },
+                { "name": "left", "id": "2e55e33c-fccf-4c96-b79c-eb850c72d1a2", "path": "<Keyboard>/a", "interactions": "", "processors": "", "groups": "", "action": "Move", "isComposite": false, "isPartOfComposite": true },
+                { "name": "right", "id": "b4d205e8-d11e-4b8e-a81e-dc76c568a4c3", "path": "<Keyboard>/d", "interactions": "", "processors": "", "groups": "", "action": "Move", "isComposite": false, "isPartOfComposite": true },
+                { "name": "", "id": "1ac4388a-4b3b-4372-9664-3d26e104a8bb", "path": "<Mouse>/delta", "interactions": "", "processors": "", "groups": "", "action": "Look", "isComposite": false, "isPartOfComposite": false },
+                { "name": "", "id": "3412e067-9170-4676-829b-50377aace56a", "path": "<Keyboard>/space", "interactions": "", "processors": "", "groups": "", "action": "Jump", "isComposite": false, "isPartOfComposite": false },
+                { "name": "", "id": "0cba2518-edc3-456d-831e-e3c1deebfd58", "path": "<Mouse>/leftButton", "interactions": "", "processors": "", "groups": "", "action": "Jet", "isComposite": false, "isPartOfComposite": false },
+                { "name": "", "id": "134c8945-986a-4cf8-8ce0-dadf0dec63d1", "path": "<Mouse>/rightButton", "interactions": "", "processors": "", "groups": "", "action": "Vacuum", "isComposite": false, "isPartOfComposite": false },
+                { "name": "", "id": "0ecbd83d-1961-43c1-8251-9978a4d6903c", "path": "<Keyboard>/e", "interactions": "", "processors": "", "groups": "", "action": "EmptyTank", "isComposite": false, "isPartOfComposite": false },
+                { "name": "", "id": "72391116-d3a0-4452-bc54-21fbd1e53c6b", "path": "<Keyboard>/escape", "interactions": "", "processors": "", "groups": "", "action": "ReleaseCursor", "isComposite": false, "isPartOfComposite": false }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

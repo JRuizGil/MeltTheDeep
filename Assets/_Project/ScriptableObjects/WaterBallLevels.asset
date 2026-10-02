@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c418d773d90c87a448526c121bd57316, type: 3}
+  m_Name: WaterBallLevels
+  m_EditorClassIdentifier: Assembly-CSharp::MeltTheDeep.WaterBallLevels
+  levels:
+  - radius: 0.1
+    volume: 2
+    material: {fileID: 2100000, guid: b32bd7e941199d84db9c04ad224c2107, type: 2}
+  - radius: 0.126
+    volume: 4
+    material: {fileID: 2100000, guid: 6aa3876024faee64e9f57b666c0e6e3f, type: 2}
+  - radius: 0.159
+    volume: 8
+    material: {fileID: 2100000, guid: 9d22e63717b13d24a98ba6a127325f15, type: 2}
+  - radius: 0.2
+    volume: 16
+    material: {fileID: 2100000, guid: e42a5bb7c8b7f2945af99974ffbc78c5, type: 2}
