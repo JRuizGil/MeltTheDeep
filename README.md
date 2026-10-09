@@ -8,8 +8,8 @@ Es mi proyecto de la asignatura Proyectos IV del Grado en Diseño y Desarrollo d
 
 Todo el diseño y la parte técnica están en la [wiki del repositorio](https://github.com/JRuizGil/MeltTheDeep/wiki):
 
-- [Diseño del juego](https://github.com/JRuizGil/MeltTheDeep/wiki/Concepto-e-historia): concepto, mecánicas, cuevas, minerales, fósil y progresión.
-- [Documento técnico](https://github.com/JRuizGil/MeltTheDeep/wiki/Arquitectura): arquitectura, sistema de hielo, generación de cuevas, montaje del fósil y sonido con FMOD.
+- [GDD · Documento de diseño](https://github.com/JRuizGil/MeltTheDeep/wiki/Concepto-e-historia): concepto, mecánicas, cuevas, minerales, fósil y progresión.
+- [TDD · Documento técnico](https://github.com/JRuizGil/MeltTheDeep/wiki/Arquitectura): arquitectura, sistema de hielo, generación de cuevas, montaje del fósil y sonido con FMOD.
 - [Planificación](https://github.com/JRuizGil/MeltTheDeep/wiki/Planificación): hitos hasta la defensa de junio.
 
 ## Tecnología
