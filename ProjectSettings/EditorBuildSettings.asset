@@ -8,5 +8,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/MeltTheDeep/Scenes/SandBox_Base.unity
     guid: 8ecee6a14c0793e4ea37a1a4a2d72783
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 7cfef535e74127140a819217558a7fd9, type: 3}
   m_UseUCBPForAssetBundles: 0
