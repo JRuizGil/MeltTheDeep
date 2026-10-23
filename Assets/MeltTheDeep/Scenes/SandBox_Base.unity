@@ -1058,6 +1058,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 049a97b991907d04c8badfeb0affbfc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::IceVolume
+  size: {x: 10, y: 6, z: 10}
+  voxelSize: 0.25
+  iceHeight: 6
+  fillMode: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
