@@ -21,6 +21,11 @@ public class IceVolume : MonoBehaviour
     
     [SerializeField] private int gizmoSliceY = 0;
 
+    private GameObject meshObject;
+    private MeshFilter meshFilter;
+    private MeshRenderer meshRenderer;
+    private MeshCollider meshCollider;
+    private Material iceMaterial;
 
     #endregion
 
@@ -141,6 +146,30 @@ public class IceVolume : MonoBehaviour
                 Gizmos.DrawCube(pointPosition, Vector3.one * voxelSize * 0.5f);
 
             }
+        }
+    }
+    //un método que crea un hijo con `MeshFilter`, `MeshRenderer` (material `M_Hielo`, URP/Lit celeste claro, Smoothness alto, opaco) y `MeshCollider`;
+    void CreateMeshObject()
+    {
+        meshObject = new GameObject("IceMesh");
+        meshObject.transform.SetParent(transform);
+        meshObject.transform.localPosition = Vector3.zero;
+        meshObject.transform.localRotation = Quaternion.identity;
+        meshObject.transform.localScale = Vector3.one;
+
+        meshFilter = meshObject.AddComponent<MeshFilter>();
+        meshRenderer = meshObject.AddComponent<MeshRenderer>();
+        meshCollider = meshObject.AddComponent<MeshCollider>();
+
+        // Assign the material (assuming you have a material named "M_Hielo" in your project)
+        iceMaterial = Resources.Load<Material>("M_Hielo");
+        if (iceMaterial != null)
+        {
+            meshRenderer.material = iceMaterial;
+        }
+        else
+        {
+            Debug.LogWarning("Material 'M_Hielo' not found in Resources.");
         }
     }
     
