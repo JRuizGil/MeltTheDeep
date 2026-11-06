@@ -2,11 +2,11 @@ using UnityEngine;
 using System.Collections.Generic;
 public static class MarchingCubesTables
 {
-
+    static float[] density = new float[8];
     //fuente «Paul Bourke, Polygonising a scalar field»
     //https://paulbourke.net/geometry/polygonise/
     #region EdgeTable
-    public static readonly int[] edgeTable = {
+    public static readonly int[] EdgeTable = {
 0x0  , 0x109, 0x203, 0x30a, 0x406, 0x50f, 0x605, 0x70c,
 0x80c, 0x905, 0xa0f, 0xb06, 0xc0a, 0xd03, 0xe09, 0xf00,
 0x190, 0x99 , 0x393, 0x29a, 0x596, 0x49f, 0x795, 0x69c,
@@ -329,56 +329,6 @@ public static readonly int[,] TriTable =
         {2, 6},
         {3, 7}
     };
-
-    public static void Build(IceVolume volume, Vector3Int cubeMin, Vector3Int cubeMaxExclusive,List<Vector3> vertices, List<int> triangles, float iso)
-    {
-        //Recibe un **rango de cubos** en lugar de recorrer todo
-        //pasarás todo el volumen
-        //métodos auxiliares (`ComputeCubeIndex`, `InterpolateEdge`)
-        for (int x = cubeMin.x; x < cubeMaxExclusive.x; x++)
-        {
-            for (int y = cubeMin.y; y < cubeMaxExclusive.y; y++)
-            {
-                for (int z = cubeMin.z; z < cubeMaxExclusive.z; z++)
-                {
-                    //MarchCube(volume, new Vector3Int(x, y, z), vertices, triangles, iso);
-                    
-                }
-            }
-        }
-    }
-    /*
-    static void ComputeCubeIndex(IceVolume volume, Vector3Int cubePos, float iso, out int cubeIndex)
-    {
-        cubeIndex = 0;
-        for (int i = 0; i < 8; i++)
-        {
-            Vector3Int cornerPos = cubePos + CornerOffsets[i];
-            float cornerValue = volume.GetValue(cornerPos);
-            if (cornerValue < iso)
-            {
-                cubeIndex |= 1 << i;
-            }
-        }
-    }
     
-    static void InterpolateEdge(IceVolume volume, Vector3Int cubePos, int edgeIndex, float iso, out Vector3 vertex)
-    {
-        //Obtiene las esquinas de la arista
-        int c0 = EdgeCorners[edgeIndex, 0];
-        int c1 = EdgeCorners[edgeIndex, 1];
-
-        //Obtiene las posiciones de las esquinas
-        Vector3Int p0 = cubePos + CornerOffsets[c0];
-        Vector3Int p1 = cubePos + CornerOffsets[c1];
-
-        //Obtiene los valores de las esquinas
-        float v0 = volume.GetValue(p0);
-        float v1 = volume.GetValue(p1);
-
-        //Interpolación lineal
-        float t = (iso - v0) / (v1 - v0);
-        vertex = Vector3.Lerp(p0, p1, t);
-    }
-*/
+    
 }
