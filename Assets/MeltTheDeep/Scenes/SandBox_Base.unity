@@ -963,7 +963,7 @@ Transform:
   m_GameObject: {fileID: 2098543186}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5, y: 0.1, z: 5}
+  m_LocalPosition: {x: 5, y: 6.1, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1008,7 +1008,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   moveAction: {fileID: 5198736766043451920, guid: 7cfef535e74127140a819217558a7fd9, type: 3}
-  lookaction: {fileID: -7252367279442858989, guid: 7cfef535e74127140a819217558a7fd9, type: 3}
+  lookAction: {fileID: -7252367279442858989, guid: 7cfef535e74127140a819217558a7fd9, type: 3}
   cameraPivot: {fileID: 849580795}
   moveSpeed: 5
   lookSpeed: 0.1
@@ -1061,7 +1061,8 @@ MonoBehaviour:
   size: {x: 10, y: 6, z: 10}
   voxelSize: 0.25
   iceHeight: 6
-  fillMode: 1
+  fillMode: 0
+  gizmoSliceY: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

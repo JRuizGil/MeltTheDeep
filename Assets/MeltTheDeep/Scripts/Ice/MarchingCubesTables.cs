@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 public static class MarchingCubesTables
 {
-    static readonly Vector3Int[] CornerOffsets = 
+    public static readonly Vector3Int[] CornerOffsets = 
     {
         /* 8 esquinas, según la figura */
         new Vector3Int(0, 0, 0),
@@ -14,17 +14,17 @@ public static class MarchingCubesTables
         new Vector3Int(1, 1, 1),
         new Vector3Int(0, 1, 1)
     };
-    static readonly int[,] EdgeCorners = 
+    public static readonly int[,] EdgeCorners = 
     {
         /* 12 parejas de esquinas */
         {0, 1},
         {1, 2},
         {2, 3},
-        {3, 0},
+        {0, 3},
         {4, 5},
         {5, 6},
         {6, 7},
-        {7, 4},
+        {4, 7},
         {0, 4},
         {1, 5},
         {2, 6},

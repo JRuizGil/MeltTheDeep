@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 //Controller class for the player character, handling movement and looking around using the new Input System.
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] InputActionReference moveAction, lookaction;
+    [SerializeField] InputActionReference moveAction, lookAction;
     [SerializeField] Transform cameraPivot;
     [SerializeField] float moveSpeed = 5f, lookSpeed = 0.1f;
     [SerializeField] float gravity = -20f, maxPitch = 85f;
@@ -19,16 +19,16 @@ public class PlayerController : MonoBehaviour
     void OnEnable()
     {
         moveAction.action.Enable();
-        lookaction.action.Enable();
+        lookAction.action.Enable();
     }
     void OnDisable()
     {
         moveAction.action.Disable();
-        lookaction.action.Disable();
+        lookAction.action.Disable();
     }
     void Update()
     {
-        HandleLook(lookaction.action);
+        HandleLook(lookAction.action);
         HandleMove(moveAction.action);
     }
     void HandleLook(InputAction lookAction)
@@ -45,7 +45,17 @@ public class PlayerController : MonoBehaviour
         Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
         verticalVelocity += gravity * Time.deltaTime;
         move.y = verticalVelocity;
-        characterController.Move(move * moveSpeed * Time.deltaTime);
+        move.x *= moveSpeed;
+        move.z *= moveSpeed;           
+        characterController.Move(move * Time.deltaTime);
+        if (IsGrounded() && verticalVelocity < 0f)
+        {
+            verticalVelocity = -2f; // Small negative value to keep the player grounded
+        }
+    }
+    bool IsGrounded()
+    {
+        return characterController.isGrounded;
     }
     #endregion
     void Start()

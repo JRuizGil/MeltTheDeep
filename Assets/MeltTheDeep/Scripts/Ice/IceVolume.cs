@@ -1,31 +1,31 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System;
-using System.Collections;
-using System.IO;
-using System.Runtime.InteropServices;
 
 public class IceVolume : MonoBehaviour
 {
     #region Configurables Volumen
-    [Header("Configurar volumen del hielo")]
-      
-    [SerializeField] public Vector3 size = new Vector3(10f, 6f, 10f);
-    [SerializeField] public const float isoLevel = 0.5f;
+    [Header("Configurar volumen del hielo")]      
+    [SerializeField] private Vector3 size = new Vector3(10f, 6f, 10f);
+    public const float isoLevel = 0.5f;
+
     [Tooltip("tamaño de los voxeles")]
-    [SerializeField] public float voxelSize = 0.25f;
+    [SerializeField] private float voxelSize = 0.25f;
     [SerializeField, Range(0f, 6f)] float iceHeight = 4.5f;
     public enum FillMode { Pool, Sphere }
+
     [SerializeField] FillMode fillMode = FillMode.Pool;
     private float [] density;
+
     public Vector3Int PointCount { get; private set; }
     public Vector3Int CellCount { get; private set; }
+    
+    [SerializeField] private int gizmoSliceY = 0;
+
+
     #endregion
 
     // Initializes the density array based on the size and voxel size of the ice volume
+    [ContextMenu("Generate Ice")]
     public void Initialize()
     {
         //CellCount = RoundToInt(size / voxelSize) en cada eje, //40,24, 40
@@ -82,6 +82,20 @@ public class IceVolume : MonoBehaviour
     {
         return x >= 0 && x < PointCount.x && y >= 0 && y < PointCount.y && z >= 0 && z < PointCount.z;
     }
+    // Returns the local position of the given point coordinates in the ice volume
+    public Vector3 GetLocalPosition(int x, int y, int z)
+    {
+        return new Vector3(x, y, z) * voxelSize;
+    }
+    // Returns the closest point coordinates in the ice volume for the given local position
+    public Vector3Int GetClosestPoint(Vector3 localPosition)
+    {
+        return new Vector3Int(
+            Mathf.RoundToInt(localPosition.x / voxelSize),
+            Mathf.RoundToInt(localPosition.y / voxelSize),
+            Mathf.RoundToInt(localPosition.z / voxelSize)
+        );
+    }
     // Gets the density value at the given point coordinates
     public float GetDensity(int x, int y, int z)
     {
@@ -92,7 +106,7 @@ public class IceVolume : MonoBehaviour
         return 0f;
     }
     // Sets the density value at the given point coordinates
-    [ContextMenu("Generate Ice")]
+    
     public void SetDensity(int x, int y, int z, float value)
     {
         //limit the value to be between 0 and 1
@@ -109,20 +123,21 @@ public class IceVolume : MonoBehaviour
     {
         //draw the wireframe cube representing the ice volume in the scene view
         Gizmos.color = Color.cyan;
-        Gizmos.DrawWireCube(transform.position + size * 0.5f, size);
-        GizmoSliceY(iceHeight);
+        Gizmos.DrawWireCube(transform.TransformPoint(size * 0.5f), size);
+        GizmoSliceY(gizmoSliceY);      
+        
     }    
-    void GizmoSliceY(float y)
+    void GizmoSliceY(in int y)
     {
         //draw a small cube for each point in the density array at the given y level, with a color that depends on the density value
         for (int x = 0; x < PointCount.x; x++)
         {
             for (int z = 0; z < PointCount.z; z++)
             {
-                float densityValue = GetDensity(x, Mathf.RoundToInt(y / voxelSize), z);
-                Color color = Color.Lerp(Color.blue, Color.red, densityValue);
+                float densityValue = GetDensity(x, y, z);
+                Color color = Color.Lerp(Color.blue, Color.red, Mathf.Clamp01(densityValue));
                 Gizmos.color = color;
-                Vector3 pointPosition = transform.position + new Vector3(x * voxelSize, y, z * voxelSize);
+                Vector3 pointPosition = transform.TransformPoint(new Vector3(x * voxelSize, y * voxelSize, z * voxelSize));
                 Gizmos.DrawCube(pointPosition, Vector3.one * voxelSize * 0.5f);
 
             }
