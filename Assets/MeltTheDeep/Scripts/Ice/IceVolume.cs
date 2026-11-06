@@ -1,12 +1,14 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public class IceVolume : MonoBehaviour
 {
     #region Configurables Volumen
     [Header("Configurar volumen del hielo")]      
     [SerializeField] private Vector3 size = new Vector3(10f, 6f, 10f);
-    public const float isoLevel = 0.5f;
+    //
+    public const float IsoLevel = 0.5f;
 
     [Tooltip("tamaño de los voxeles")]
     [SerializeField] private float voxelSize = 0.25f;
@@ -25,7 +27,7 @@ public class IceVolume : MonoBehaviour
     private MeshFilter meshFilter;
     private MeshRenderer meshRenderer;
     private MeshCollider meshCollider;
-    private Material iceMaterial;
+    [SerializeField]private Material iceMaterial;
     //array de triangles y vertices para la malla
     private List<Vector3> vertices = new List<Vector3>();
     private List<int> triangles = new List<int>();
@@ -68,7 +70,8 @@ public class IceVolume : MonoBehaviour
                 return Mathf.Clamp01(0.5f + (iceHeight - y * voxelSize) / voxelSize);
             case FillMode.Sphere:
                 Vector3 p = new Vector3(x, y, z) * voxelSize;
-                float radius = Mathf.Min(size.x, size.y, size.z) * 0.5f;
+                //restarle 2 * voxelSize
+                float radius = Mathf.Min(size.x, size.y, size.z) * 0.5f - 2 * voxelSize;
                 return Mathf.Clamp01(0.5f + (radius - Vector3.Distance(p, size * 0.5f)) / voxelSize);
             default:
                 return 1f;
@@ -78,6 +81,14 @@ public class IceVolume : MonoBehaviour
     void Awake()
     {
         Initialize();
+        CreateMeshObject();
+        //Crea un new Mesh() con indexFormat = UInt32 para poder tener más de 65535 vertices
+        
+        vertices.Clear();
+        triangles.Clear();
+        RebuildMesh();
+        
+        
     }
     #region Ice generation Methods
     // Returns the index of the density array for the given point coordinates
@@ -105,7 +116,7 @@ public class IceVolume : MonoBehaviour
         );
     }
     // Gets the density value at the given point coordinates
-/*
+
     //añadr una sobrecarga en IceVolume.cs para que GetDensity acepte un Vector3Int como argumento y llame a la versión existente de GetDensity con los componentes x, y, z del Vector3Int. Esto permitirá obtener la densidad de un punto usando un Vector3Int en lugar de tres enteros separados.
     public float GetDensity(Vector3Int point)
     {
@@ -119,23 +130,7 @@ public class IceVolume : MonoBehaviour
             return density[Index(x, y, z)];
         }
         return 0f;
-    }
-    
-    // Computes the normal vector at the given point coordinates based on the density values of neighboring points
-    public Vector3 GetNormal(Vector3Int point)
-    {
-        return ComputeGradient(point, this).normalized;
-    }
-    // Sets the density value at the given point coordinates
-    //metodo ComputeGradient
-    void ComputeGradient(Vector3Int p, out Vector3 gradient)
-    {
-        float dX = GetDensity(p.x + 1, p.y, p.z) - GetDensity(p.x - 1, p.y, p.z);
-        float dY = GetDensity(p.x, p.y + 1, p.z) - GetDensity(p.x, p.y - 1, p.z);
-        float dZ = GetDensity(p.x, p.y, p.z + 1) - GetDensity(p.x, p.y, p.z - 1);
-        gradient = new Vector3(dX, dY, dZ);
-    }
-    */
+    }    
     public void SetDensity(int x, int y, int z, float value)
     {
         //limit the value to be between 0 and 1
@@ -156,25 +151,23 @@ public class IceVolume : MonoBehaviour
         GizmoSliceY(gizmoSliceY);      
         
     }    
-    void GizmoSliceY(in int y)
+    void GizmoSliceY(int y)
     {
         //draw a small cube for each point in the density array at the given y level, with a color that depends on the density value
         for (int x = 0; x < PointCount.x; x++)
         {
             for (int z = 0; z < PointCount.z; z++)
-            {
-                /*
+            {                
                 float densityValue = GetDensity(x, y, z);
                 Color color = Color.Lerp(Color.blue, Color.red, Mathf.Clamp01(densityValue));
                 Gizmos.color = color;
                 Vector3 pointPosition = transform.TransformPoint(new Vector3(x * voxelSize, y * voxelSize, z * voxelSize));
-                Gizmos.DrawCube(pointPosition, Vector3.one * voxelSize * 0.5f);
-                */
+                Gizmos.DrawCube(pointPosition, Vector3.one * voxelSize * 0.5f);                
             }
         }
     }
     //un método que crea un hijo con `MeshFilter`, `MeshRenderer` (material `M_Hielo`, URP/Lit celeste claro, Smoothness alto, opaco) y `MeshCollider`;
-    /*
+    
     void CreateMeshObject()
     {
         // crea un hijo con MeshFilter, MeshRenderer y MeshCollider
@@ -185,10 +178,7 @@ public class IceVolume : MonoBehaviour
         meshObject.transform.localPosition = Vector3.zero;
         meshFilter = meshObject.AddComponent<MeshFilter>();
         meshRenderer = meshObject.AddComponent<MeshRenderer>();
-        meshCollider = meshObject.AddComponent<MeshCollider>();
-
-        // Load the ice material from the Resources folder
-        iceMaterial = Resources.Load<Material>("M_Hielo");
+        meshCollider = meshObject.AddComponent<MeshCollider>();    
         if (iceMaterial != null)
         {
             meshRenderer.material = iceMaterial;
@@ -197,16 +187,24 @@ public class IceVolume : MonoBehaviour
         {
             Debug.LogWarning("Material 'M_Hielo' not found in Resources.");
         }
+        
+    }
+    void RebuildMesh()
+    {
         //llama a Build() con el rango completo;
         //y rellena malla con Clear(), SetVertices(), SetTriangles(lista, 0), RecalculateNormals(), RecalculateBounds(), RecalculateBounds();
-        MarchingCubesMesher.Build(this, Vector3Int.zero, PointCount, vertices, triangles, isoLevel);
+        meshFilter.mesh = new Mesh
+        {
+            indexFormat = UnityEngine.Rendering.IndexFormat.UInt32
+        };
+        //asigna meshcollider.sharedMesh = meshFilter.mesh; sino el jugador se hude
+        meshCollider.sharedMesh = meshFilter.mesh;
+        MarchingCubesMesher.Build(this, Vector3Int.zero, CellCount, vertices, triangles, IsoLevel);
         meshFilter.mesh.Clear();
         meshFilter.mesh.SetVertices(vertices);
         meshFilter.mesh.SetTriangles(triangles, 0);
         meshFilter.mesh.RecalculateNormals();
-        meshFilter.mesh.RecalculateBounds();
-
     }
-    */
+    
     
 }
