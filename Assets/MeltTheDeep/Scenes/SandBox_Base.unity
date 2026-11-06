@@ -963,7 +963,7 @@ Transform:
   m_GameObject: {fileID: 2098543186}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5, y: 6.1, z: 5}
+  m_LocalPosition: {x: 5, y: 7, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1062,7 +1062,8 @@ MonoBehaviour:
   voxelSize: 0.25
   iceHeight: 6
   fillMode: 0
-  gizmoSliceY: 0
+  gizmoSliceY: 24
+  iceMaterial: {fileID: 2100000, guid: 1435b27e628ee8941886648896f81e64, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

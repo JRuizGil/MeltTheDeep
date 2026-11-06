@@ -9,8 +9,7 @@ public static class MarchingCubesMesher
     static Vector3[] EdgeVertexPositions = new Vector3[12];
     static Vector3[] EdgeVertexNormals = new Vector3[12]; 
     //normals en List<Vector3>
-    static List<Vector3> normals = new List<Vector3>();
-    public static void Build(IceVolume volume, Vector3Int cubeMin, Vector3Int cubeMaxExclusive,List<Vector3> vertices, List<int> triangles, float iso)
+    public static void Build(IceVolume volume, Vector3Int cubeMin, Vector3Int cubeMaxExclusive,List<Vector3> vertices,List<Vector3> normals, List<int> triangles, float iso)
     {
         //for cz cy c en [cubemin, cubemaxExclusive)]
         for (int z = cubeMin.z; z < cubeMaxExclusive.z; z++)
@@ -24,7 +23,7 @@ public static class MarchingCubesMesher
                     Vector3Int c = new Vector3Int(x, y, z);
                     for (int i = 0; i < 8; i++)
                     {
-                        Vector3Int corner = c + MarchingCubesMesher.CornerOffsets[i];
+                        Vector3Int corner = c + MarchingCubesTables.CornerOffsets[i];
                         density[i] = volume.GetDensity(corner);
                     }
                     //idx =  ComputeCubeIndex(dens, iso) //bit i si dens[i ] < iso
@@ -37,7 +36,7 @@ public static class MarchingCubesMesher
                         }
                     }
                     //mask = EdgeTable[idx]; si mask == 0 siguiente cubo
-                    int mask = MarchingCubesMesher.EdgeTable[idx];
+                    int mask = MarchingCubesTables.EdgeTable[idx];
                     if (mask == 0)
                     {
                         continue;
@@ -49,11 +48,11 @@ public static class MarchingCubesMesher
                     {
                         if ((mask & (1 << edge)) != 0)
                         {
-                            Vector3Int cornerA = new Vector3Int(x, y, z) + MarchingCubesMesher.CornerOffsets[EdgeCorners[edge, 0]];
-                            Vector3Int cornerB = new Vector3Int(x, y, z) + MarchingCubesMesher.CornerOffsets[EdgeCorners[edge, 1]];
-                            float dA = density[EdgeCorners[edge, 0]];
-                            float dB = density[EdgeCorners[edge, 1]];
-                            InterpolateEdge(cornerA, cornerB, dA, dB, iso, out Vector3 vertexPos, out Vector3 vertexNormal);
+                            Vector3Int cornerA = new Vector3Int(x, y, z) + MarchingCubesTables.CornerOffsets[MarchingCubesTables.EdgeCorners[edge, 0]];
+                            Vector3Int cornerB = new Vector3Int(x, y, z) + MarchingCubesTables.CornerOffsets[MarchingCubesTables.EdgeCorners[edge, 1]];
+                            float dA = density[MarchingCubesTables.EdgeCorners[edge, 0]];
+                            float dB = density[MarchingCubesTables.EdgeCorners[edge, 1]];
+                            InterpolateEdge(volume, cornerA, cornerB, dA, dB, iso, out Vector3 vertexPos, out Vector3 vertexNormal);
                             //almacena vertexPos y vertexNormal en un buffer estatico Vector3[12]
                             EdgeVertexPositions[edge] = vertexPos;
                             EdgeVertexNormals[edge] = vertexNormal;
@@ -64,23 +63,24 @@ public static class MarchingCubesMesher
                     //bucle de Tritable[idx] que devuelve 3 indices de aristas para cada triangulo
                     
 
-                    for (int k = 0; MarchingCubesMesher.TriTable[idx, k] != -1; k += 3)
+                    for (int k = 0; MarchingCubesTables.TriTable[idx, k] != -1; k += 3)
                     {
                         //b= vertices.count ; añade 3 vertices y su s normales
                         int b = vertices.Count;
                         //triangles += b+2 , b+1, b 
-                        triangles.Add(b + 2);
-                        triangles.Add(b + 1);
                         triangles.Add(b);
+                        triangles.Add(b + 1);
+                        triangles.Add(b + 2);                        
+                        
                         //añadir 3 vertices interpolados
                         for (int i = 0; i < 3; i++)
                         {
-                            int edgeIndex = MarchingCubesMesher.TriTable[idx, k + i];
-                            Vector3Int cornerA = new Vector3Int(x, y, z) + MarchingCubesMesher.CornerOffsets[EdgeCorners[edgeIndex, 0]];
-                            Vector3Int cornerB = new Vector3Int(x, y, z) + MarchingCubesMesher.CornerOffsets[EdgeCorners[edgeIndex, 1]];
-                            float dA = density[EdgeCorners[edgeIndex, 0]];
-                            float dB = density[EdgeCorners[edgeIndex, 1]];
-                            InterpolateEdge(cornerA, cornerB, dA, dB, iso, out Vector3 vertexPos, out Vector3 vertexNormal);
+                            int edgeIndex = MarchingCubesTables.TriTable[idx, k + i];
+                            Vector3Int cornerA = new Vector3Int(x, y, z) + MarchingCubesTables.CornerOffsets[MarchingCubesTables.EdgeCorners[edgeIndex, 0]];
+                            Vector3Int cornerB = new Vector3Int(x, y, z) + MarchingCubesTables.CornerOffsets[MarchingCubesTables.EdgeCorners[edgeIndex, 1]];
+                            //leer EdgeVertexPositions[edgeIndex] y EdgeVertexNormals[edgeIndex].
+                            Vector3 vertexPos = EdgeVertexPositions[edgeIndex];
+                            Vector3 vertexNormal = EdgeVertexNormals[edgeIndex];
                             vertices.Add(vertexPos);
                             normals.Add(vertexNormal);
                         }
@@ -100,14 +100,12 @@ public static class MarchingCubesMesher
                 idx |= 1 << i;
             }
         }
-        mask = MarchingCubesMesher.EdgeTable[idx];
+        mask = MarchingCubesTables.EdgeTable[idx];
     }
     
     //interpolate edge : t = |dB-dA| < 1e-5 ? 0.5 : (iso-dA)/(dB-dA)
-    static void InterpolateEdge(Vector3Int a, Vector3Int b, float dA, float dB, float iso, out Vector3 vertex, out Vector3 normal)
-    {
-        //volume como primer parametro
-        IceVolume volume = IceVolume.Instance;
+    static void InterpolateEdge(IceVolume volume, Vector3Int a, Vector3Int b, float dA, float dB, float iso, out Vector3 vertex, out Vector3 normal)
+    {        
         //tiene que escalar Lerp(a, b , t)  , da la posicion en indices de rejilla, la malla saldra 4 veces mas grande      
         float t = Mathf.Abs(dB - dA) < 1e-5f ? 0.5f : (iso - dA) / (dB - dA);
         vertex = Vector3.Lerp(a, b, t);
@@ -116,7 +114,8 @@ public static class MarchingCubesMesher
         //normal = grad(a) * (1-t) + grad(b) * t
         Vector3 gradA = ComputeGradient(a, volume);
         Vector3 gradB = ComputeGradient(b, volume);
-        normal = Vector3.Lerp(gradA, gradB, t).normalized;
+        //la normal tiene que ser el negativo
+        normal = -(Vector3.Lerp(gradA, gradB, t).normalized);
         
     }
     //grad(p)  = (d(x+1)-d(y+1), d(x+1)-d(y+1), d(x+1)-d(y+1))

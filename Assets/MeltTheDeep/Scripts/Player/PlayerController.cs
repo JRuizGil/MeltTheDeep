@@ -15,7 +15,7 @@ public class PlayerController : MonoBehaviour
     void Awake()
     {
         characterController = GetComponent<CharacterController>();
-    }    
+    }     
     void OnEnable()
     {
         moveAction.action.Enable();

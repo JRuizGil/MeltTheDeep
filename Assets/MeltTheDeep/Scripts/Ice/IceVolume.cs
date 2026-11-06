@@ -27,9 +27,11 @@ public class IceVolume : MonoBehaviour
     private MeshFilter meshFilter;
     private MeshRenderer meshRenderer;
     private MeshCollider meshCollider;
+    private Mesh iceMesh;
     [SerializeField]private Material iceMaterial;
     //array de triangles y vertices para la malla
     private List<Vector3> vertices = new List<Vector3>();
+    private List<Vector3> normals = new List<Vector3>();
     private List<int> triangles = new List<int>();
 
     #endregion
@@ -85,6 +87,7 @@ public class IceVolume : MonoBehaviour
         //Crea un new Mesh() con indexFormat = UInt32 para poder tener más de 65535 vertices
         
         vertices.Clear();
+        normals.Clear();
         triangles.Clear();
         RebuildMesh();
         
@@ -105,6 +108,11 @@ public class IceVolume : MonoBehaviour
     public Vector3 GetLocalPosition(int x, int y, int z)
     {
         return new Vector3(x, y, z) * voxelSize;
+    }
+    //sobrecarga getlocalposition
+    public Vector3 GetLocalPosition(Vector3Int point)
+    {
+        return new Vector3(point.x, point.y, point.z) * voxelSize;
     }
     // Returns the closest point coordinates in the ice volume for the given local position
     public Vector3Int GetClosestPoint(Vector3 localPosition)
@@ -178,7 +186,8 @@ public class IceVolume : MonoBehaviour
         meshObject.transform.localPosition = Vector3.zero;
         meshFilter = meshObject.AddComponent<MeshFilter>();
         meshRenderer = meshObject.AddComponent<MeshRenderer>();
-        meshCollider = meshObject.AddComponent<MeshCollider>();    
+        meshCollider = meshObject.AddComponent<MeshCollider>();  
+
         if (iceMaterial != null)
         {
             meshRenderer.material = iceMaterial;
@@ -187,23 +196,28 @@ public class IceVolume : MonoBehaviour
         {
             Debug.LogWarning("Material 'M_Hielo' not found in Resources.");
         }
+
+        iceMesh = new Mesh
+        {
+            indexFormat = UnityEngine.Rendering.IndexFormat.UInt32
+        };
+        meshFilter.sharedMesh = iceMesh;
         
     }
     void RebuildMesh()
     {
-        //llama a Build() con el rango completo;
-        //y rellena malla con Clear(), SetVertices(), SetTriangles(lista, 0), RecalculateNormals(), RecalculateBounds(), RecalculateBounds();
-        meshFilter.mesh = new Mesh
-        {
-            indexFormat = UnityEngine.Rendering.IndexFormat.UInt32
-        };
-        //asigna meshcollider.sharedMesh = meshFilter.mesh; sino el jugador se hude
-        meshCollider.sharedMesh = meshFilter.mesh;
-        MarchingCubesMesher.Build(this, Vector3Int.zero, CellCount, vertices, triangles, IsoLevel);
-        meshFilter.mesh.Clear();
-        meshFilter.mesh.SetVertices(vertices);
-        meshFilter.mesh.SetTriangles(triangles, 0);
-        meshFilter.mesh.RecalculateNormals();
+        //1. vaciar las 3 listas (Clear)
+        vertices.Clear();
+        normals.Clear();
+        triangles.Clear();              
+        //asigna meshcollider.sharedMesh = meshFilter.mesh; sino el jugador se hude        
+        MarchingCubesMesher.Build(this, Vector3Int.zero, CellCount, vertices, normals, triangles, IsoLevel);
+        iceMesh.Clear();     
+        iceMesh.SetVertices(vertices);
+        iceMesh.SetNormals(normals);
+        iceMesh.SetTriangles(triangles, 0);
+        meshCollider.sharedMesh = null;
+        meshCollider.sharedMesh = iceMesh;
     }
     
     
