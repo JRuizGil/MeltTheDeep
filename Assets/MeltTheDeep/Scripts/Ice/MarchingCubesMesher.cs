@@ -26,7 +26,7 @@ public static class MarchingCubesMesher
                         Vector3Int corner = c + MarchingCubesTables.CornerOffsets[i];
                         density[i] = volume.GetDensity(corner);
                     }
-                    //idx =  ComputeCubeIndex(dens, iso) //bit i si dens[i ] < iso
+                    
                     int idx = 0;
                     for (int i = 0; i < 8; i++)
                     {
@@ -75,9 +75,7 @@ public static class MarchingCubesMesher
                         //añadir 3 vertices interpolados
                         for (int i = 0; i < 3; i++)
                         {
-                            int edgeIndex = MarchingCubesTables.TriTable[idx, k + i];
-                            Vector3Int cornerA = new Vector3Int(x, y, z) + MarchingCubesTables.CornerOffsets[MarchingCubesTables.EdgeCorners[edgeIndex, 0]];
-                            Vector3Int cornerB = new Vector3Int(x, y, z) + MarchingCubesTables.CornerOffsets[MarchingCubesTables.EdgeCorners[edgeIndex, 1]];
+                            int edgeIndex = MarchingCubesTables.TriTable[idx, k + i];                            
                             //leer EdgeVertexPositions[edgeIndex] y EdgeVertexNormals[edgeIndex].
                             Vector3 vertexPos = EdgeVertexPositions[edgeIndex];
                             Vector3 vertexNormal = EdgeVertexNormals[edgeIndex];
@@ -90,25 +88,13 @@ public static class MarchingCubesMesher
             }
         }
     }
-    static void ComputeCubeIndex(float[] dens, float iso, out int idx, out int mask)
-    {
-        idx = 0;
-        for (int i = 0; i < 8; i++)
-        {
-            if (dens[i] < iso)
-            {
-                idx |= 1 << i;
-            }
-        }
-        mask = MarchingCubesTables.EdgeTable[idx];
-    }
+    
     
     //interpolate edge : t = |dB-dA| < 1e-5 ? 0.5 : (iso-dA)/(dB-dA)
     static void InterpolateEdge(IceVolume volume, Vector3Int a, Vector3Int b, float dA, float dB, float iso, out Vector3 vertex, out Vector3 normal)
     {        
         //tiene que escalar Lerp(a, b , t)  , da la posicion en indices de rejilla, la malla saldra 4 veces mas grande      
-        float t = Mathf.Abs(dB - dA) < 1e-5f ? 0.5f : (iso - dA) / (dB - dA);
-        vertex = Vector3.Lerp(a, b, t);
+        float t = Mathf.Abs(dB - dA) < 1e-5f ? 0.5f : (iso - dA) / (dB - dA);        
         //interpola entre volume.GetLocalPosition(a) y volume.GetLocalPosition(b) para obtener la posicion en el espacio local de la malla
         vertex = Vector3.Lerp(volume.GetLocalPosition(a), volume.GetLocalPosition(b), t);
         //normal = grad(a) * (1-t) + grad(b) * t
