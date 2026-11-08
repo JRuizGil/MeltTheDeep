@@ -62,6 +62,48 @@ public class IceVolume : MonoBehaviour
             }
         }        
     }
+    #region Tests (usar con size = 0.25 -> 1 celda, 2x2x2 puntos, solo en Play)
+    [ContextMenu("Test: una esquina")]
+    public void TestCorner()
+    {
+        TestPuntos(new Vector3Int(0, 0, 0));
+    }
+
+    [ContextMenu("Test: dos esquinas contiguas")]
+    public void TestTwoCorners()
+    {
+        TestPuntos(new Vector3Int(0, 0, 0), new Vector3Int(1, 0, 0));
+    }
+
+    [ContextMenu("Test: las ocho")]
+    public void TestEightCorners()
+    {
+        var puntos = new List<Vector3Int>();
+        for (int z = 0; z < 2; z++)
+            for (int y = 0; y < 2; y++)
+                for (int x = 0; x < 2; x++)
+                    puntos.Add(new Vector3Int(x, y, z));
+        TestPuntos(puntos.ToArray());
+    }
+
+    // Initialize, pone las 8 densidades a 0 (después, porque el borde ya es 0), activa los puntos dados y reconstruye
+    void TestPuntos(params Vector3Int[] activos)
+    {
+        if (!Application.isPlaying)
+        {
+            Debug.LogWarning("Lanza los tests en Play: iceMesh y el collider se crean en Awake.");
+            return;
+        }
+        Initialize();
+        for (int z = 0; z < 2; z++)
+            for (int y = 0; y < 2; y++)
+                for (int x = 0; x < 2; x++)
+                    SetDensity(x, y, z, 0f);
+        foreach (var p in activos)
+            SetDensity(p.x, p.y, p.z, 1f);
+        RebuildMesh();
+    }
+    #endregion
 
     float Relleno(int x, int y, int z)
     {
@@ -218,6 +260,7 @@ public class IceVolume : MonoBehaviour
         iceMesh.SetTriangles(triangles, 0);
         meshCollider.sharedMesh = null;
         meshCollider.sharedMesh = iceMesh;
+        Debug.Log($"[{name}] malla ({fillMode}): {vertices.Count} vértices, {triangles.Count / 3} triángulos");
     }
     
     

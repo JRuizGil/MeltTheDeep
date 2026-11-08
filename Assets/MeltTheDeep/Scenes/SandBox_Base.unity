@@ -372,11 +372,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 049a97b991907d04c8badfeb0affbfc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::IceVolume
-  size: {x: 3, y: 3, z: 3}
+  size: {x: 0.25, y: 0.25, z: 0.25}
   voxelSize: 0.25
   iceHeight: 6
-  fillMode: 1
-  gizmoSliceY: 6
+  fillMode: 0
+  gizmoSliceY: 0
   iceMaterial: {fileID: 2100000, guid: 1435b27e628ee8941886648896f81e64, type: 2}
 --- !u!4 &627124609
 Transform:
